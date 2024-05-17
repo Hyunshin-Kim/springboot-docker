@@ -1,0 +1,40 @@
+@startuml
+state FooGradient #red-green ##00FFFF
+state FooDashed #red|green ##[dashed]blue {
+}
+state FooDotted ##[dotted]blue {
+}
+state FooBold ##[bold] {
+}
+state Foo1 ##[dotted]green {
+state inner1 ##[dotted]yellow
+}
+
+state out ##[dotted]gold
+
+state Foo2 ##[bold]green {
+state inner2 ##[dotted]yellow
+}
+inner1 -> inner2
+out -> inner2
+
+state FooGradient #red-green;line:00FFFF
+state FooDashed #red|green;line.dashed;line:blue {
+}
+state FooDotted #line.dotted;line:blue {
+}
+state FooBold #line.bold {
+}
+state Foo11 #line.dotted;line:green {
+state inner11 #line.dotted;line:yellow
+}
+
+state out2 #line.dotted;line:gold
+
+state Foo12 #line.bold;line:green {
+state inner12 #line.dotted;line:yellow
+}
+inner11 -> inner12
+out2 -> inner12
+
+@enduml

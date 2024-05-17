@@ -1,0 +1,56 @@
+@startuml
+state 결제처리 {
+    state 결제요청 : 1
+    state 결제완료 : 2
+    state 결제취소 : 3
+    state 결제실패 : 4
+    state 결제대기 : 5
+    state 결제대기취소 : 6
+    state 부분취소 : 7
+    state 결제등록 : 9
+
+    state begin <<entryPoint>> #red
+    state end <<exitPoint>> #red
+
+    begin -down-> 결제요청
+    결제요청 -left-> 결제등록 
+    note on link
+    결제 시 간편결제 등록만 요청한 경우 (결제금액: 0)
+    end note
+
+    결제요청 -right-> 결제대기
+    note on link
+    * CyberSource, Adyen의 경우 인증 후 결제대기 상태로 변경되고 추가적으로 승인(Capture) 절차 필요
+    * CNSPay 가상계좌의 경우 인증 후 입금이 확인되어야 결제완료 단계
+    end note
+    결제요청 -down---> 결제실패
+    note on link
+    GPay 결제요청 후 실패 발생 시
+    end note
+    결제대기 -down-> 결제대기취소
+
+    결제대기 -down---> 결제완료 
+    note on link
+    대기 상태에서 캡처(CyberSource, Adyen), 입금(CNSPay 가상계좌)
+    end note
+    결제요청 -down-> 결제완료 : 국내 신용카드는 바로 결제 완료됨
+    결제완료 -down-> 결제취소 : 결제 건 전체 취소
+    결제완료 -down-> 부분취소 : 결제 건 일부 취소
+    부분취소 -> 부분취소 : 결제 건 전체 취소 시까지 계속 취소 가능
+
+    부분취소 -down-> 결제취소 : 부분 취소로 전체 취소되면 결제취소 상태가 됨
+    결제요청 -down-> end
+    결제대기 -down-> end
+    결제대기취소 -down-> end
+    결제완료 -down-> end
+    결제취소 -down-> end
+    부분취소 -down-> end
+    결제실패 -down-> end
+    결제등록 -down-> end
+}
+
+[*] -down-> begin 
+
+@enduml
+
+

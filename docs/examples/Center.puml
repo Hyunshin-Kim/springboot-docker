@@ -1,0 +1,32 @@
+@startuml
+skinparam defaultTextAlignment<<right>> right
+skinparam defaultTextAlignment<<center>> center
+skinparam defaultTextAlignment<<left>> left
+
+' skinparam componentDefaultTextAlignment<<right>> right
+' skinparam componentDefaultTextAlignment<<left>> left
+' skinparam componentDefaultTextAlignment<<center>> center
+
+' skinparam componentTextAlignment<<right>> right
+' skinparam componentTextAlignment<<left>> left
+' skinparam componentTextAlignment<<center>> center
+
+' skinparam rectanangleDefaultTextAlignment<<right>> right
+' skinparam rectanangleDefaultTextAlignment<<left>> left
+' skinparam rectanangleDefaultTextAlignment<<center>> center
+
+' skinparam rectangleTextAlignment<<right>> right
+' skinparam rectangleTextAlignment<<left>> left
+' skinparam rectangleTextAlignment<<center>> center
+
+rectangle "오른쪽으로\r제목을\r정렬한다" as supR {
+  rectangle "왼쪽으로\l제목을\l정렬한다" as supL {
+    rectangle "중앙으로\n제목을\n정렬한다"  as supC {
+      rectangle "RIGHT Component RIGHT\nRIGHT RIGHT RIGHT\nRIGHT RIGHT" <<right>> as subR   
+      rectangle "LEFT Component LEFT\nLEFT LEFT LEFT LEFT\nLEFT LEFT" <<left>> as subL   
+      rectangle "CENTER Component CENTER\nCENTER CENTER CENTER\nCENTER CENTER" <<center>> as subC   
+    }
+  }
+}
+ 
+@enduml

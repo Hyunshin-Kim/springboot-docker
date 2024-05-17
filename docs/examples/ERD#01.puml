@@ -1,0 +1,60 @@
+@startuml
+
+entity member {
+  *member_id: bigint(20)
+  name: varchar(40)
+  city: varchar(40)
+  street: varchar(100)
+  zipcode: varchar(5)
+}
+
+'order 는 예약어
+entity orders {
+  *order_id: bigint(20)
+  member_id: bigint(20)
+  placed_at: timestamp(3)
+  status: tinyint(4)
+}
+
+entity order_item {
+  *order_item_id: bigint(20)
+  order_id: bigint(20)
+  item_id: bigint(20)
+  sub_total: decimal(10, 2)
+  quantity: int(10)
+}
+
+entity item {
+  *item_id: bitint(20)
+  name: varchar(100)
+  price: decimal(9, 2)
+  stock: unsigned int(10)
+}
+
+entity category {
+  *category_id: bigint(20)
+  parent_id: bigint(20)
+  name: varchar(40)
+}
+
+entity category_item {
+  *category_id: bigint(20)
+  item_id: bigint(20)
+}
+
+entity delivery {
+  *delivery_id: bigint(20)
+  city: varchar(40)
+  street: varchar(100)
+  zipcode: varchar(5)
+  status: tinyint(4)
+}
+
+member ||--o{ orders
+orders ||-o{ order_item
+order_item }o-|| item
+orders ||--|| delivery
+category ||--o{ category_item
+category_item }o--|| item
+
+@enduml

@@ -1,0 +1,48 @@
+@startuml
+
+entity TB_CM_STOR_INFO_BAS {
+   *STOR_ID  :  VARCHAR2(50)   NOT NULL -- 스토어ID 
+    EBP_BSN_DIV_CD  :  VARCHAR2(50)    -- EBP사업구분코드
+    STOR_NM  :  VARCHAR2(100)   NOT NULL -- 스토어명
+    STOR_ENG_NM  :  VARCHAR2(200)   NOT NULL -- 스토어영문명
+    SORT_ORDR  :  NUMBER(10)   NOT NULL -- 정렬순서
+    SMPPM_PWD_CHECK_CNT  :  NUMBER(10)   NOT NULL -- 간편결제비밀번호체크건수
+    SMPPM_CARD_RGST_UCNT  :  NUMBER(10)   NOT NULL -- 간편결제카드등록개수
+    PROD_VLDT_YN  :  VARCHAR2(1)    -- 상품유효성체크여부
+    MBR_VLDT_YN  :  VARCHAR2(1)    -- 회원유효성체크여부
+    TAX_VLDT_YN  :  VARCHAR2(1)    -- 세금유효성체크여부
+    CPN_USE_YN  :  VARCHAR2(1)    -- 쿠폰사용여부
+    STTL_RTIO_USE_YN  :  VARCHAR2(1)    -- 정산비율사용여부
+    VRTL_ACCNT_ACHD_NM  :  VARCHAR2(200)   NOT NULL -- 가상계좌예금주명
+    ERR_CD_VSN_NM  :  VARCHAR2(10)   NOT NULL -- 오류코드버전명
+    USE_YN  :  VARCHAR2(1)    -- 사용여부
+    FRST_CRTR_NO  :  VARCHAR2(50)   NOT NULL -- 최초생성자번호
+    FRST_CRT_DTT  :  DATE()   NOT NULL -- 최초생성일시
+    LAST_CHNGR_NO  :  VARCHAR2(50)   NOT NULL -- 최종변경자번호
+    LAST_CHNG_DTT  :  DATE()   NOT NULL -- 최종변경일시
+}
+entity TB_CM_STOR_INFO_BAS_HIST {
+   *STOR_ID  :  VARCHAR2(50)   NOT NULL -- 스토어ID
+   *HIST_SNO  :  NUMBER(20)   NOT NULL -- 이력일련번호
+    EBP_BSN_DIV_CD  :  VARCHAR2(50)    -- EBP사업구분코드
+    STOR_NM  :  VARCHAR2(100)   NOT NULL -- 스토어명
+    STOR_ENG_NM  :  VARCHAR2(200)   NOT NULL -- 스토어영문명
+    SORT_ORDR  :  NUMBER(10)   NOT NULL -- 정렬순서
+    SMPPM_PWD_CHECK_CNT  :  NUMBER(10)   NOT NULL -- 간편결제비밀번호체크건수
+    SMPPM_CARD_RGST_UCNT  :  NUMBER(10)   NOT NULL -- 간편결제카드등록개수
+    PROD_VLDT_YN  :  VARCHAR2(1)    -- 상품유효성체크여부
+    MBR_VLDT_YN  :  VARCHAR2(1)    -- 회원유효성체크여부
+    TAX_VLDT_YN  :  VARCHAR2(1)    -- 세금유효성체크여부
+    CPN_USE_YN  :  VARCHAR2(1)    -- 쿠폰사용여부
+    STTL_RTIO_USE_YN  :  VARCHAR2(1)    -- 정산비율사용여부
+    VRTL_ACCNT_ACHD_NM  :  VARCHAR2(200)   NOT NULL -- 가상계좌예금주명
+    ERR_CD_VSN_NM  :  VARCHAR2(10)   NOT NULL -- 오류코드버전명
+    USE_YN  :  VARCHAR2(1)    -- 사용여부
+    FRST_CRTR_NO  :  VARCHAR2(50)   NOT NULL -- 최초생성자번호
+    FRST_CRT_DTT  :  DATE()   NOT NULL -- 최초생성일시
+    LAST_CHNGR_NO  :  VARCHAR2(50)   NOT NULL -- 최종변경자번호
+    LAST_CHNG_DTT  :  DATE()   NOT NULL -- 최종변경일시
+}
+
+TB_CM_STOR_INFO_BAS ||-|{ TB_CM_STOR_INFO_BAS_HIST : STOR_ID
+@enduml

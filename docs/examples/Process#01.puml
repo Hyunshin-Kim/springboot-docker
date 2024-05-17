@@ -1,0 +1,127 @@
+
+
+
+@startuml
+'''''''''''autoactivate'''''''''''
+autoactivate off
+
+'''''''''''padding'''''''''''
+skinparam ParticipantPadding 10
+skinparam BoxPadding 15
+
+'''''''''''header/footer'''''''''''
+header EBP_API_121
+footer Page %page% of %lastpage%
+
+'''''''''''participant'''''''''''
+box "Store"
+participant "LBP"          as Actor      #Yellow
+end box
+
+box "Core"
+participant "EbpAccountController"    as EbpAccountController    #Pink
+participant "CardRegMgmtProcService"     as CardRegMgmtProcService     #Pink
+participant "PmtInfoProcService"     as PmtInfoProcService     #Pink
+' participant "CommBlAcctBasDao"    as CommBlAcctBasDao    #Pink
+database    "CommBlEsyPmtBasDao"    as CommBlEsyPmtBasDao    #Pink
+end box
+
+box "PG"
+participant "GPAY"        as PG
+participant "Adyen"       as Adyen
+participant "CNSPay"      as CNSPay
+end box
+
+''' proccess '''
+Actor -> EbpAccountController : paymentTreatment
+activate EbpAccountController
+
+EbpAccountController -> CardRegMgmtProcService : requestProccess
+activate CardRegMgmtProcService
+
+alt adyenLimitOneProcService
+    CardRegMgmtProcService -> PmtInfoProcService : deletePgPmtMthdInfo
+    activate PmtInfoProcService
+
+    PmtInfoProcService -> PG : getPgGcDel
+    activate PG
+    PG -> Adyen
+    activate Adyen
+    Adyen --> PG
+    deactivate Adyen
+    PG --> PmtInfoProcService
+    deactivate PG
+
+
+    alt isPgRemoved
+        PmtInfoProcService -> CommBlEsyPmtBasDao : deletePayInfo
+        activate CommBlEsyPmtBasDao
+        rnote over CommBlEsyPmtBasDao
+        TB_BL_ESY_PMT_BAS
+        간편결제기본
+        end note
+        CommBlEsyPmtBasDao --> PmtInfoProcService
+        deactivate CommBlEsyPmtBasDao
+    else
+        PmtInfoProcService -> CommBlEsyPmtBasDao : updatePayInfoCardRgstUseStCd
+        activate CommBlEsyPmtBasDao
+        rnote over CommBlEsyPmtBasDao
+        TB_BL_ESY_PMT_BAS
+        간편결제기본
+        end note
+        CommBlEsyPmtBasDao --> PmtInfoProcService
+        deactivate CommBlEsyPmtBasDao
+    end
+
+    PmtInfoProcService --> CardRegMgmtProcService
+    deactivate PmtInfoProcService
+
+    CardRegMgmtProcService -> CommBlEsyPmtBasDao : insertHistoryList
+    activate CommBlEsyPmtBasDao
+    rnote over CommBlEsyPmtBasDao
+    TB_BL_ESY_PMT_BAS_HIST
+    간편결제기본이력
+    end note
+    CommBlEsyPmtBasDao --> CardRegMgmtProcService
+    deactivate CommBlEsyPmtBasDao
+
+    CardRegMgmtProcService -> CommBlEsyPmtBasDao : updatePayInfo
+    activate CommBlEsyPmtBasDao
+    rnote over CommBlEsyPmtBasDao
+    TB_BL_ESY_PMT_BAS
+    간편결제기본
+    end note
+    CommBlEsyPmtBasDao --> CardRegMgmtProcService
+    deactivate CommBlEsyPmtBasDao
+
+else others
+        CardRegMgmtProcService -> CommBlEsyPmtBasDao : insertHistoryList
+        activate CommBlEsyPmtBasDao
+        rnote over CommBlEsyPmtBasDao
+        TB_BL_ESY_PMT_BAS_HIST
+        간편결제기본이력
+        end note
+        CommBlEsyPmtBasDao --> CardRegMgmtProcService
+        deactivate CommBlEsyPmtBasDao
+
+        CardRegMgmtProcService -> CommBlEsyPmtBasDao : updatePayInfo
+        activate CommBlEsyPmtBasDao
+        rnote over CommBlEsyPmtBasDao
+        TB_BL_ESY_PMT_BAS
+        간편결제기본
+        end note
+        CommBlEsyPmtBasDao --> CardRegMgmtProcService
+        deactivate CommBlEsyPmtBasDao
+end
+
+CardRegMgmtProcService --> EbpAccountController
+deactivate CardRegMgmtProcService
+
+EbpAccountController --> Actor
+deactivate EbpAccountController
+
+@enduml
+
+ 
+
+

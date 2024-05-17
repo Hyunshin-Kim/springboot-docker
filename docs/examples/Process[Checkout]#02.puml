@@ -1,0 +1,83 @@
+@startuml
+!pragma teoz true
+
+'''''''''''autoactivate'''''''''''
+autoactivate off
+
+'''''''''''padding'''''''''''
+skinparam ParticipantPadding 10
+skinparam BoxPadding 15
+skinparam hyperlinkUnderline false
+
+'''''''''''header/footer'''''''''''
+header 간편결제 Process (TV)
+footer Page %page% of %lastpage%
+
+'''''''''''numbering''''''''''''
+autonumber 1.1 1 "<b>[0.0]"
+'''''''''''participant'''''''''''
+box "Store"
+actor       "고객"             as Actor        #IndianRed
+participant "주문서"           as OrderSheet   #Yellow
+end box  
+
+box "PayUI"
+'participant req224.jsp [
+'    =Checkout
+'    ----
+'    ""req224.jsp""
+'] 
+participant "Checkout.do\nreq224.jsp"    as req224.jsp          #YellowGreen
+participant "RequestPayment.do"          as RequestPayment.do   #YellowGreen
+participant "ReponsePayment.jsp"         as ReponsePayment.jsp  #YellowGreen
+end box
+
+box "Core"
+participant "EBP_API_224"     as EBP_API_224     #Pink
+end box
+
+box "PG"
+participant "GPAY"        as PG
+participant "CNSPay"      as CNSPay
+end box
+
+'''''''''''간편결제 Proccess'''''''''''
+'간편결제 title
+title "5/2일 취약점공격"
+
+'''카드정보조회'''
+group 결제요청
+    activate OrderSheet #IndianRed
+    Actor ->> OrderSheet
+    {start} OrderSheet ->> req224.jsp : Checkout (Hash Check)
+autonumber 2.1 1
+    activate req224.jsp #IndianRed
+    ==위변조구간==
+    {end} req224.jsp --> req224.jsp : Ajax호출 
+    {start} <-> {end} : <color red><b>위변조구간</color>
+    activate req224.jsp #OrangeRed
+    ==위변조구간==
+    req224.jsp -[#red]>> RequestPayment.do : coreApiCall
+    note over req224.jsp, RequestPayment.do: 긴급조치: 결제요청금액 Hash Check\n조치방안: <font color=red>전문 암호화 처리    
+    activate RequestPayment.do
+    RequestPayment.do -> EBP_API_224
+    activate EBP_API_224
+    ' rnote over EBP_API_224
+    ' [[http://collab.lge.com/main/pages/viewpage.action?pageId=2447956149 EBP_API_224]]
+    ' (결제요청)
+    ' end note
+     EBP_API_224 --> RequestPayment.do : PG호출정보(암호화)
+    deactivate EBP_API_224
+    RequestPayment.do -->> req224.jsp 
+    deactivate RequestPayment.do
+    deactivate req224.jsp
+    deactivate req224.jsp
+    req224.jsp ->> PG
+    activate PG
+    |||
+    |||
+    deactivate PG
+    deactivate OrderSheet
+end
+
+@enduml

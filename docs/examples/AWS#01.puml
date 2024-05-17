@@ -1,0 +1,27 @@
+@startuml
+    !define AWSPUML https://raw.githubusercontent.com/milo-minderbinder/AWS-PlantUML/release/18-2-22/dist
+    ' !includeurl AWSPUML/common.puml
+    ' !includeurl AWSPUML/Storage/AmazonS3/AmazonS3.puml
+    ' !includeurl AWSPUML/Storage/AmazonS3/bucket/bucket.puml
+    !includeurl AWSPUML/Storage/AmazonS3/AmazonS3_LARGE.puml
+
+    !include <aws/common>
+    !include <aws/Storage/AmazonS3/AmazonS3>
+    !include <aws/Storage/AmazonS3/bucket/bucket>    
+
+    AMAZONS3(s3_internal)
+    AMAZONS3(s3_partner,"Vendor's S3")
+    s3_internal <- s3_partner
+
+    skinparam nodeBackgroundColor #F9DFDC
+    skinparam storage<<**AmazonS3**>> {
+        backgroundColor #F9DFDC
+    }
+    AMAZONS3(s3_internal1,"Default S3") #F9DFDC
+    AMAZONS3(s3_internal2,"S3 as node",node)
+    AMAZONS3_LARGE(s3_partner2,"Large S3")
+
+    s3_internal2 <-r- s3_partner2
+    s3_internal1 <-l- s3_partner2
+
+@enduml

@@ -1,0 +1,15 @@
+@startuml
+participant "EBP" as Alice
+participant "OBS" as Bob
+
+Alice -> Bob: Authentication Request
+alt#Gold #LightBlue Successful case
+    Bob -> Alice: Authentication Accepted
+else #Pink Failure
+    Bob -> Alice: Authentication Rejected
+else #LightGray Time out
+    Bob -> Alice: Request time out
+else #LightGray Invalid
+    Bob -> Alice: Invalid Response
+end
+@enduml

@@ -1,0 +1,216 @@
+
+
+
+@startuml
+'''''''''''autoactivate'''''''''''
+autoactivate on
+
+'''''''''''padding'''''''''''
+skinparam ParticipantPadding 10
+skinparam BoxPadding 15
+skinparam hyperlinkUnderline false
+
+'''''''''''header/footer'''''''''''
+header 간편결제 Process (TV)
+footer Page %page% of %lastpage%
+
+'''''''''''participant'''''''''''
+box "Store"
+participant "CP"              as CP         #Yellow
+participant "TVLink"          as Store      #Yellow
+participant "TV BillingApp"   as StoreApp   #Yellow
+end box
+
+box "LBP"
+participant "LBP"      as LBP      #Peru
+end box
+
+box "EBP"
+'participant "연동(UI)"  as PayUI    #Pink
+participant "Admin"    as Admin    #Pink
+participant "Core"     as Core     #Pink
+participant "Batch"    as Batch    #Pink
+participant "S3"       as S3       #Pink
+end box
+
+box "PG"
+participant "GPAY"        as PG
+participant "Danal"       as Danal
+participant "CNSPay"      as CNSPay
+end box
+
+'''''''''''간편결제 Proccess'''''''''''
+'간편결제 title
+title 간편결제
+
+'''카드정보조회'''
+group 카드정보조회
+    Store -> LBP
+
+    LBP -> Core
+    rnote over Core
+    [[http://collab.lge.com/main/pages/viewpage.action?pageId=2447956149 EBP_API_109]]
+    (간편결제정보조회)
+    end note
+    Core --> LBP : 카드 목록\n(간편결제 일련번호 포함)
+
+    LBP --> Store
+end
+
+'''카드등록'''
+group 카드등록
+
+    opt KR CNSPay Card Only
+        Store -> Danal
+        rnote over Danal
+        본인인증화면
+        end note
+        Danal --> Store : 생년월일,성별
+    end
+
+    Store -> LBP : 생년월일,성별
+
+    LBP -> Core
+    rnote over Core
+    [[http://collab.lge.com/main/pages/viewpage.action?pageId=2465853646 EBP_API_120]]
+    (신용카드 등록관리 요청)
+    end note
+    Core --> LBP : PG 호출 URL
+
+    LBP --> Store
+
+    Store -> PG
+    rnote over PG
+    PG카드등록화면
+    end note
+    PG --> Store
+
+    Store -> LBP
+
+    LBP -> Core : 간편결제일련번호
+    rnote over Core
+	[[http://collab.lge.com/main/pages/viewpage.action?pageId=2466964533 EBP_API_121]]
+    (신용카드 등록관리 처리)
+    end note
+    Core --> LBP
+
+    LBP --> Store
+end
+
+'''PIN번호등록'''
+group PIN번호등록
+    Store -> LBP : 암호화된 PIN번호
+
+    LBP -> Core
+    rnote over Core
+    EBP_API_131
+    PIN번호등록
+    end note
+    Core --> LBP
+
+    LBP --> Store
+end
+
+'''카드삭제'''
+group 카드삭제
+    Store -> LBP : 간편결제일련번호
+
+    LBP -> Core
+    rnote over Core
+        EBP_API_124
+        (간편결제 수단 삭제)
+    end note
+
+    Core -> PG
+    rnote over PG
+    카드정보삭제 API
+    end note
+    PG --> Core
+
+    Core --> LBP
+
+    LBP --> Store
+end
+
+'''간편결제'''
+group 간편결제
+    group 결제인증
+        StoreApp -> LBP : 간편결제일련번호,\n암호화된 PIN번호
+        LBP -> Core
+
+        rnote over Core
+        EBP_API_126
+        (간편결제 비밀번호 확인)
+        end note
+        note right Core #Gold
+        PIN인증Key생성
+        sha256(<스토어결제요청번호> + <사용자번호> + <EBP내부키>)
+        end note
+        Core --> LBP : PIN인증Key
+
+        LBP --> StoreApp
+    end
+
+    group 결제요청
+        StoreApp -> LBP : PIN인증Key,\n결제정보
+        LBP -> Core
+
+        rnote over Core
+        EBP_API_224
+        (결제요청)
+        end note
+        note right Core #Gold
+        결제인증Key생성
+        sha256( <EBP주문번호> +  <사용자번호> + <EBP내부키> )
+        end note
+
+        Core -> PG
+        rnote over PG
+        간편결제API
+        end note
+        PG --> Core
+
+        Core --> LBP : 결제결과,\n결제인증Key
+
+    '    note right Store #Tomato
+    '    등록 Count 제한 있음
+    '    end note
+
+        LBP --> StoreApp
+    end
+end
+
+'''구독결제'''
+group 구독결제
+    group 결제요청
+        CP -> LBP : 결제인증Key,\n결제정보
+        LBP -> Core
+
+        rnote over Core
+        EBP_API_224
+        (결제요청)
+        end note
+
+        Core -> PG #Gold
+        rnote over PG
+        간편결제API
+        end note
+        PG --> Core
+
+        Core --> LBP : 결제결과
+
+    '    note right Store #Tomato
+    '    등록 Count 제한 있음
+    '    end note
+
+        LBP --> CP
+    end
+end
+
+''''''''''''카드수정 Proccess'''''''''''
+''신규페이지 title
+'newpage 카드수정
+
+@enduml
+
+

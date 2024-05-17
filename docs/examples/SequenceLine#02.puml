@@ -1,0 +1,14 @@
+@startuml
+!pragma teoz true
+
+{start} Alice -[#red]>> Bob : start doing things during duration
+
+Bob -> Max : something
+note over Alice, Bob: 긴급조치: 결제요청금액 Hash Check\n조치방안: <font color=red>전문 암호화 처리    
+|||
+|||
+Max -> Bob : something else
+{end} Bob -> Alice : finish
+
+{start} <-> {end} : some time
+@enduml
